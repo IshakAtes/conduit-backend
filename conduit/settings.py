@@ -25,8 +25,14 @@ SECRET_KEY = '2^f+3@v7$v1f8yt0!s)3-1t$)tlp+xm17=*g))_xoi&&9m#2a&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.environ.get('SECRET_IP'),
+    os.environ.get('LOCALHOST'),
+    os.environ.get('LOCALHOST_2'),
+]
 
+# nur nicht-leere Werte nutzen, damit wir kein none in allowed host bekommen, filtern wir es aus, um probleme zu vermeiden
+ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
 
 # Application definition
 
