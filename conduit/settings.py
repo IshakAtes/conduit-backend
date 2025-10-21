@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+SERVER_IP = os.environ.get('SECRET_IP')
+SERVER_PORT_FRONTEND = os.environ.get('SERVER_PORT_FRONTEND')
+SERVER_PORT_BACKEND = os.environ.get('SERVER_PORT_BACKEND')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -31,7 +35,8 @@ ALLOWED_HOSTS = [
     os.environ.get('LOCALHOST_2'),
 ]
 
-# nur nicht-leere Werte nutzen, damit wir kein none in allowed host bekommen, filtern wir es aus, um probleme zu vermeiden
+# In der ersten Zeile setzt du ALLOWED_HOSTS auf eine Liste mit evtl. None-Werten (wenn eine der Umgebungsvariablen fehlt).
+# In der zweiten Zeile (hier unten: ALLOWED_HOSTS) überschreibst du dieselbe Variable mit einer gefilterten Version, die None-Werte entfernt.
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
 
 # Application definition
@@ -55,10 +60,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -135,8 +140,6 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 # --- Static files ---
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -144,15 +147,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # WhiteNoise aktivieren (für GZIP + Cache-Busting)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = [
     '0.0.0.0:4000',
-    'localhost:8000',
-    'localhost:8282',
-    'http://49.13.207.228:8282',
-    'https://49.13.207.228:8000',
-    'http://49.13.207.228:8000',
-    'http://localhost:8282',
-)
+    f'http://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
+    f'https://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
+    f'https://{SERVER_IP}:{SERVER_PORT_BACKEND}',
+    f'http://{SERVER_IP}:{SERVER_PORT_BACKEND}',
+    f'http://localhost:{SERVER_PORT_FRONTEND}',
+    f'http://localhost:{SERVER_PORT_BACKEND}',
+    f'https://localhost:{SERVER_PORT_FRONTEND}',
+    f'https://localhost:{SERVER_PORT_BACKEND}',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Tell Django about the custom `User` model we created. The string
 # `authentication.User` tells Django we are referring to the `User` model in
