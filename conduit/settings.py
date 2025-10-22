@@ -59,12 +59,12 @@ INSTALLED_APPS = [
     'conduit.apps.profiles',
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE_CLASSES = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -148,7 +148,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ORIGIN_WHITELIST = [
-    '0.0.0.0:4000',
     f'http://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
     f'https://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
     f'https://{SERVER_IP}:{SERVER_PORT_BACKEND}',
@@ -159,7 +158,30 @@ CORS_ORIGIN_WHITELIST = [
     f'https://localhost:{SERVER_PORT_BACKEND}',
 ]
 
+# CORS_ALLOWED_ORIGINS = [
+#     '0.0.0.0:4000',
+#     f'http://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
+#     f'https://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
+#     f'https://{SERVER_IP}:{SERVER_PORT_BACKEND}',
+#     f'http://{SERVER_IP}:{SERVER_PORT_BACKEND}',
+#     f'http://localhost:{SERVER_PORT_FRONTEND}',
+#     f'http://localhost:{SERVER_PORT_BACKEND}',
+#     f'https://localhost:{SERVER_PORT_FRONTEND}',
+#     f'https://localhost:{SERVER_PORT_BACKEND}',
+# ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+# Optional: Wenn du Custom Header brauchst
+CORS_ALLOW_HEADERS = (
+    'x-requested-with',
+    'content-type',
+    'accept',
+    'origin',
+    'authorization',
+    'x-csrftoken',
+)
 
 # Tell Django about the custom `User` model we created. The string
 # `authentication.User` tells Django we are referring to the `User` model in
