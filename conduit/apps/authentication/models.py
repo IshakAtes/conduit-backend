@@ -43,14 +43,21 @@ class UserManager(BaseUserManager):
         they want.
         """
         import os
-        print('Reading superuser password from env')
-        SUPER_USER_PASSWORD = os.environ.get(
-            'DJANGO_SUPERUSER_PASSWORD', '')
-        if len(SUPER_USER_PASSWORD) >= 4:
-            password = SUPER_USER_PASSWORD
-        else:
-            print('Setting default password since no superuser password was provided.')
-            password = 'securepass'
+        # Falls kein Username angegeben wurde → aus ENV holen
+        if not username:
+            username = os.environ.get('SUPER_USER_NAME', 'admin')
+        # Falls keine E-Mail angegeben wurde → aus ENV holen
+        if not email:
+            email = os.environ.get('SUPER_USER_EMAIL', 'admin@admin.com')
+        if not password:
+            print('Reading superuser password from env')
+            SUPER_USER_PASSWORD = os.environ.get(
+                'DJANGO_SUPERUSER_PASSWORD', '')
+            if SUPER_USER_PASSWORD:
+                password = SUPER_USER_PASSWORD
+            else:
+                print('Setting default password since no superuser password was provided.')
+                password = 'securepass'
 
         user = self.create_user(username, email, password)
         user.is_superuser = True

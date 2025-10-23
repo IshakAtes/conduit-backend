@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+SERVER_IP = os.environ.get('SECRET_IP')
+SERVER_PORT_FRONTEND = os.environ.get('SERVER_PORT_FRONTEND')
+SERVER_PORT_BACKEND = os.environ.get('SERVER_PORT_BACKEND')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,8 +29,16 @@ SECRET_KEY = '2^f+3@v7$v1f8yt0!s)3-1t$)tlp+xm17=*g))_xoi&&9m#2a&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.environ.get('SECRET_IP'),
+    os.environ.get('LOCALHOST'),
+    os.environ.get('LOCALHOST_2'),
+    'conduit_backend',
+]
 
+# In der ersten Zeile setzt du ALLOWED_HOSTS auf eine Liste mit evtl. None-Werten (wenn eine der Umgebungsvariablen fehlt).
+# In der zweiten Zeile (hier unten: ALLOWED_HOSTS) überschreibst du dieselbe Variable mit einer gefilterten Version, die None-Werte entfernt.
+ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
 
 # Application definition
 
@@ -48,11 +60,12 @@ INSTALLED_APPS = [
     'conduit.apps.profiles',
 ]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+MIDDLEWARE_CLASSES = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -91,6 +104,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
@@ -121,18 +135,45 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+# --- Static files ---
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-CORS_ORIGIN_WHITELIST = (
-    '0.0.0.0:4000',
-    'localhost:4000',
+# WhiteNoise aktivieren (für GZIP + Cache-Busting)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# CORS_ALLOWED_ORIGINS = [
+#     '0.0.0.0:4000',
+#     f'http://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
+#     f'https://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
+#     f'https://{SERVER_IP}:{SERVER_PORT_BACKEND}',
+#     f'http://{SERVER_IP}:{SERVER_PORT_BACKEND}',
+#     f'http://localhost:{SERVER_PORT_FRONTEND}',
+#     f'http://localhost:{SERVER_PORT_BACKEND}',
+#     f'https://localhost:{SERVER_PORT_FRONTEND}',
+#     f'https://localhost:{SERVER_PORT_BACKEND}',
+# ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+# Optional: Wenn du Custom Header brauchst
+CORS_ALLOW_HEADERS = (
+    'x-requested-with',
+    'content-type',
+    'accept',
+    'origin',
+    'authorization',
+    'x-csrftoken',
 )
+
+APPEND_SLASH = True
 
 # Tell Django about the custom `User` model we created. The string
 # `authentication.User` tells Django we are referring to the `User` model in
