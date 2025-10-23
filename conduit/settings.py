@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     os.environ.get('SECRET_IP'),
     os.environ.get('LOCALHOST'),
     os.environ.get('LOCALHOST_2'),
+    'conduit_backend',
 ]
 
 # In der ersten Zeile setzt du ALLOWED_HOSTS auf eine Liste mit evtl. None-Werten (wenn eine der Umgebungsvariablen fehlt).
@@ -146,17 +147,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # WhiteNoise aktivieren (für GZIP + Cache-Busting)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-CORS_ORIGIN_WHITELIST = [
-    f'http://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
-    f'https://{SERVER_IP}:{SERVER_PORT_FRONTEND}',
-    f'https://{SERVER_IP}:{SERVER_PORT_BACKEND}',
-    f'http://{SERVER_IP}:{SERVER_PORT_BACKEND}',
-    f'http://localhost:{SERVER_PORT_FRONTEND}',
-    f'http://localhost:{SERVER_PORT_BACKEND}',
-    f'https://localhost:{SERVER_PORT_FRONTEND}',
-    f'https://localhost:{SERVER_PORT_BACKEND}',
-]
 
 # CORS_ALLOWED_ORIGINS = [
 #     '0.0.0.0:4000',
