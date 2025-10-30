@@ -160,10 +160,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #     f'https://localhost:{SERVER_PORT_BACKEND}',
 # ]
 
+# Just a reminder:
+# DEBUG = True, CORS_ORIGIN_ALLOW_ALL = True, and CORS_ALLOW_CREDENTIALS = True is NOT a prod setup. The reason I did this is because of this faulty project.
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-# Optional: Wenn du Custom Header brauchst
+
+# Allow specific custom headers for CORS requests.
+# Django by default only accepts a limited set of headers.
+# Modern frontends (like React or Angular) often send additional headers
+# such as Authorization, X-CSRFToken, or X-Requested-With.
+# Without listing them here, Django would block those requests with a CORS error.
+# In short: we enable these headers to prevent frontend requests (especially authenticated ones)
+# from being rejected due to missing CORS permissions.
 CORS_ALLOW_HEADERS = (
     'x-requested-with',
     'content-type',
